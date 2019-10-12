@@ -1,11 +1,29 @@
-import React from "react";
-import Header from "./components/Header.js";
+import React, {Component} from 'react'
+import './App.css'
+import MainContainer from './components/MainContainer';
 
+export default class App extends Component {
+  constructor(){
+    super()
+    this.state = {
+      characters: []
+    }
+  }
 
-export default function App() {
-  return (
-    <main>
-      <Header />
-    </main>
-  );
+  componentDidMount(){
+    fetch('https://rickandmortyapi.com/api/character/')
+      .then(response => response.json())
+      .then(res => this.setState({
+        characters: res.results
+      }))
+  }
+
+  render(){
+    return(
+      <div className='App'>
+        <h1>Welcome to the ultimate fan site!</h1>
+        <MainContainer characters={this.state.characters}/>
+      </div>
+    )
+  }
 }
