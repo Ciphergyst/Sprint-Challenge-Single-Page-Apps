@@ -1,36 +1,44 @@
 import React, { useState, useEffect } from "react";
-import CharacterCard from "./Card";
+import { Component } from 'react';
+import SearchCharacters from './SearchCharacters'
+import ReactSearchBox from 'react-search-box'
 
-export default function SearchForm({characterData}) {
-  const characters = characterData;
+export default class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      results: [],
+      loading: true
+    };
+  }
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  componentDidMount() {
+    this.performSearch();
+  }
 
-  useEffect(() => {
-    const searchResults = characters.filter(character =>
-      character.name.toLowerCase().includes(searchTerm)
-      );
-      setSearchResults(searchResults);
-  }, [searchTerm]);
+  performSearch = (query = '') => {
+    fetch(`https://rickandmortyapi.com/api/character/`)
+      .then(response => response.json())
+      .then(responseData => {
+        this.setState({
+          results: responseData.results,
+          loading: false
+        });
+      })
+      .catch(error => {
+        console.log('Error fetching and parsing data', error);
+      });
+  }
 
-  const handleChange = event => {
-    setSearchTerm(event.target.value);
-  };
- 
-  return (
-    <section className="search-form">
-     <form>
-       <label htmlFor="name">Search:</label>
-       <input
-       id="name"
-       type="text"
-       name="textfield"
-       Placeholder="Search"
-       value={searchTerm}
-       onChange={handleChange}
-       />
-     </form>
-    </section>
-  );
+
+  render() {
+    return (
+      <ReactSearchBox
+        placeholder="Search"
+        value="Doe"
+        data={this.data}
+        callback={record => console.log(record)}
+      />
+    )
+  }
 }

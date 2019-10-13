@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import './App.css'
 import MainContainer from './components/MainContainer';
+import SearchForm from './components/SearchForm';
 
 export default class App extends Component {
   constructor(){
@@ -22,7 +23,9 @@ export default class App extends Component {
     return(
       <div className='App'>
         <h1>Welcome to the ultimate fan site!</h1>
+        <SearchForm onSearch = {this.performSearch} />
         <MainContainer characters={this.state.characters}/>
+        
       </div>
     )
   }
