@@ -1,44 +1,56 @@
-import React, { useState, useEffect } from "react";
-import { Component } from 'react';
-import SearchCharacters from './SearchCharacters'
-import ReactSearchBox from 'react-search-box'
+import React from "react";
+import { Component } from "react"
 
-export default class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      results: [],
-      loading: true
-    };
+import CharacterList from "./CharacterList"
+
+import axios from 'axios';
+
+class Search extends Component {
+  state = {
+    characters: null,
+    loading: false,
+    value: []
   }
 
-  componentDidMount() {
-    this.performSearch();
+
+  search = async val => {
+    this.setState({ loading: true });
+    const res = await axios('https://rickandmortyapi.com/api/character/')
+    const characters = await res.data.results;
+
+    this.setState({ characters, loading: false});
+  }
+    
+
+  onChangeHandler = async e => {
+    this.search(e.target.value);
+    this.setState({ value: e.target.value });
+  };
+
+  get renderCharacterCard() {
+    let charCard = <h1>Find A Character</h1>;
+    if (this.state.charCard) {
+      charCard = <CharacterList list={this.state.charCard} />;
+    }
+
+    return charCard;
+
   }
 
-  performSearch = (query = '') => {
-    fetch(`https://rickandmortyapi.com/api/character/`)
-      .then(response => response.json())
-      .then(responseData => {
-        this.setState({
-          results: responseData.results,
-          loading: false
-        });
-      })
-      .catch(error => {
-        console.log('Error fetching and parsing data', error);
-      });
-  }
 
 
   render() {
     return (
-      <ReactSearchBox
-        placeholder="Search"
-        value="Doe"
-        data={this.data}
-        callback={record => console.log(record)}
-      />
-    )
+      <div>
+        <input
+          value={this.state.value}
+          onChange={e => this.onChangeHandler(e)}
+          placeholder="Type something to search"
+        />
+        {this.characters}
+      </div>
+    );
   }
 }
+
+export default Search
